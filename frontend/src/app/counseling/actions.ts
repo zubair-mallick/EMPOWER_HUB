@@ -5,7 +5,7 @@ import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/ge
 import { responseSchemaCounselling } from "./responseSchemaCounselling";
 
 // Set up Google Generative AI instance
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.key3;
 
 if (!apiKey) {
   throw new Error("API_KEY is not defined in the environment variables.");

@@ -109,11 +109,13 @@ const CareerGuidance = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+       <Button type="submit" disabled={isPending}>
+            {isPending ? "Loading..." : "Submit"}
+          </Button>
         </form>
       </Form>
 
-      {isPending && <Spinner />}
+      {/* {isPending && <Spinner />} */}
 
       {!isPending && data && (
         <div className="grid grid-cols-1 gap-6 px-4 py-4 mt-10 border-2 rounded-lg border-zinc-500">

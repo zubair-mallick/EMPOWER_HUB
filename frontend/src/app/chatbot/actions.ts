@@ -3,7 +3,7 @@
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 
 
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.key2;
 
 if (!apiKey) {
   throw new Error("API_KEY is not defined in the environment variables.");
@@ -31,7 +31,8 @@ const model = genAI.getGenerativeModel({
     responseMimeType: "application/json",
     responseSchema: {
       type: "string" as any ,
-      description: "The generated response from the AI model.",
+      description: "The generated response from the AI model in normal text.",
+  
     },
   },
 
@@ -55,10 +56,11 @@ export const getCareerGuidanceResponse = async (userInput: string, chatHistory: 
 
       Instructions:
       - Analyze the user's situation based on the chat history.
-      - Provide practical and personalized advice related to the user's career goals and aspirations.
-      - Offer information on different career paths, educational requirements, and potential job opportunities.
-      - Structure responses in a clear, numbered format when offering steps or advice.
-      - Encourage and guide users positively.
+      - Provide practical and personalized advice related to the user's career goals and aspirations  in normal text .
+      - Offer information on different career paths, educational requirements, and potential job opportunities  in normal text .
+      - Encourage and guide users positively and only response realted to the carrer and councelling related subject if user ask anything else just say that u can only give answer related to councelling  in normal text .
+      - if the user is greeting them then greet them back with information about your purpose in normal text 
+      - minimum response should atleast be a line and maximum a paragraph and make sure not to use special characters
 
       User Question: "${userInput}"
     `;

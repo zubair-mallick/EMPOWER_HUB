@@ -62,6 +62,7 @@ const CounselingChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [messageTimestamps, setMessageTimestamps] = useState([]);
   const chatEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const formatChatHistory = () => {
     return messages
@@ -103,9 +104,10 @@ const CounselingChatbot = () => {
       const chatHistory = formatChatHistory();
 
       try {
-      
-
-          const {response : botResponse} = await getCareerGuidanceResponse(userInput,chatHistory)
+        const { response: botResponse } = await getCareerGuidanceResponse(
+          userInput,
+          chatHistory
+        );
 
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -135,9 +137,8 @@ const CounselingChatbot = () => {
   };
 
   useEffect(() => {
-    if (messages.length > 0) {
-      console.log(messages);
-      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0 && chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
 
@@ -159,7 +160,10 @@ const CounselingChatbot = () => {
           Chatbot AI
         </h2>
 
-        <div className="bg-gray-800 rounded-lg shadow-md flex-1 overflow-y-auto p-4 max-h-[60vh] min-h-[30vh]">
+        <div
+          ref={chatContainerRef}
+          className="bg-gray-800 rounded-lg shadow-md flex-1 overflow-y-auto p-4 max-h-[60vh] min-h-[30vh]"
+        >
           {messages.map((msg) => (
             <ChatBubble
               key={msg.id}

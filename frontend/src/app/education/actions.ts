@@ -26,7 +26,7 @@ interface TreeNode {
 }
 
 // Set up the API key in a more secure way (environment variables)
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.key4;
 
 if (!apiKey) {
   throw new Error("API_KEY is not defined in the environment variables.");

@@ -87,7 +87,7 @@ const EducationalRoadmapMaker = () => {
         </form>
       </Form>
 
-      {isPending && <Spinner />}
+      {/* {isPending && <Spinner />} */}
 
       {data && <TreeDiagram data={data} />} {/* Use correct typing for data */}
 
