@@ -2,6 +2,9 @@
 
 EmpowerHub is an AI-powered platform designed to provide career and education guidance. It offers personalized career suggestions, an educational roadmap maker, career insights on exams and scholarships, a resource finder for study materials, and a career counseling chatbot for expert advice. This ensures users can make informed academic and professional decisions.
 
+![image](https://github.com/user-attachments/assets/ced54e1e-48a3-46d7-9f0f-0ebdf4c2f63f)
+
+
 ---
 
 \
