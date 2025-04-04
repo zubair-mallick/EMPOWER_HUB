@@ -64,11 +64,10 @@ EmpowerHub is an AI-powered platform designed to provide career and education gu
 
 ## 🏗️ Tech Stack
 
-- **Frontend:** React.js, Next.js, TailwindCSS
+- **Frontend:** React.js, TailwindCSS
 - **Backend:** Node.js, Express.js
-- **Database:** MongoDB (if applicable)
 - **AI & LLM:** Gemini AI (default) with modular integration
-- **Cloud Hosting:** Vercel (for frontend) & Render/Cloud Provider (for backend, if applicable)
+- **Cloud Hosting:** Vercel (for frontend) & Render/Cloud Provider (for backend)
 
 ---
 
