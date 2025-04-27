@@ -56,6 +56,8 @@ const Navbar = () => {
             >
               AI Chatbot
             </Link>
+
+            
           </div>
 
           <div className="flex -mr-2 md:hidden">
@@ -137,6 +139,7 @@ const Navbar = () => {
               >
                 AI Chatbot
               </Link>
+              
             </div>
           </div>
         )}
