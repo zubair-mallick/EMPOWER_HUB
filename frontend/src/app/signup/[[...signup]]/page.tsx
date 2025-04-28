@@ -5,9 +5,9 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   // 1️⃣ Hold the chosen role in state
-  const [role, setRole] = useState<"student" | "educator" | null>(null);
+  const [role, setRole] = useState<"student" | "councellor" | null>(null);
 
-  // 2️⃣ First show buttons to pick student vs educator
+  // 2️⃣ First show buttons to pick student vs councellor
   if (!role) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4">
@@ -20,10 +20,10 @@ export default function SignUpPage() {
             Student
           </button>
           <button
-            onClick={() => setRole("educator")}
+            onClick={() => setRole("councellor")}
             className="px-6 py-3 text-white bg-green-600 rounded-md hover:bg-green-700"
           >
-            Educator
+            Councellor
           </button>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default function SignUpPage() {
         path="/signup"
         routing="path"
         signInUrl="/signin"
-        unsafeMetadata={{ role }}        // ← sets user.unsafeMetadata.role to "student" or "educator"
+        unsafeMetadata={{ role }}        // ← sets user.unsafeMetadata.role to "student" or "councellor"
       />
     </div>
   );
