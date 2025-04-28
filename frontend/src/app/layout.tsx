@@ -1,11 +1,14 @@
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { Toaster } from "@/components/ui/toaster";
+import { dark } from '@clerk/themes'
+import ReactQueryProvider from "@/lib/ReactQueryProvider";
+import {
+  ClerkProvider
+} from '@clerk/nextjs';
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ReactQueryProvider from "@/lib/ReactQueryProvider";
-import { Toaster } from "@/components/ui/toaster";
-
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -28,6 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider  appearance={{
+      baseTheme: dark,
+    }}>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -40,5 +46,6 @@ export default function RootLayout({
         <Toaster />
       </body>
     </html>
+    </ClerkProvider>
   );
 }
