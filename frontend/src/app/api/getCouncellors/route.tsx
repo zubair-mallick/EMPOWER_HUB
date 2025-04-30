@@ -2,7 +2,6 @@ import { clerkClient } from "@clerk/clerk-sdk-node";
 
 export async function GET() {
   try {
-    // Correct usage: NO parentheses after clerkClient
     const { data: users } = await clerkClient.users.getUserList();
 
     const counselors = users
@@ -13,6 +12,7 @@ export async function GET() {
         lastName: user.lastName,
         email: user.emailAddresses[0]?.emailAddress,
         profileImageUrl: user.imageUrl,
+        unsafeMetadata: user.unsafeMetadata
       }));
 
     return Response.json({ success: true, counselors });
