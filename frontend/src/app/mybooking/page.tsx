@@ -39,7 +39,7 @@ export default function MyBookingPage() {
 
     const role = user?.unsafeMetadata?.role;
     if (role !== 'councellor') {
-      router.push('/');
+      router.push('/unauthorized');
       return;
     }
 
