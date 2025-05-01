@@ -59,7 +59,7 @@ export default function CallPage() {
   <div >
       <div
       ref={containerRef}
-      className="myCallContainer my-24 "
+      className="myCallContainer my-24 min-h-[80vh] place-content-center"
       style={{ backgroundColor: "transparent" }}
     ></div>
   </div>
