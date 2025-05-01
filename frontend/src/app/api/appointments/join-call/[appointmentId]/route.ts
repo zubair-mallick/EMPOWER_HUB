@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { v4 as uuidv4 } from 'uuid';
 
-export async function PATCH(
+export async function GET(
   req: NextRequest,
   { params }: { params: { appointmentId: string } }
 ) {

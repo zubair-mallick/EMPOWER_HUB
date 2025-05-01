@@ -40,24 +40,28 @@ export default function CallPage() {
 
     zp.joinRoom({
       container: containerRef.current,
-      sharedLinks: [
-        {
-          name: "Personal link",
-          url: window.location.href,
-        },
-      ],
+      
       scenario: {
         mode: ZegoUIKitPrebuilt.GroupCall,
       },
+    showPreJoinView:false,
+      turnOnCameraWhenJoining: true,
+      showRoomTimer: false,
+      showScreenSharingButton: false,
+      showTextChat: false,
+      layout: "Auto",
+     
     });
 
   }, [roomIdFromParams, usernameFromParams]);
 
   return (
-    <div
+  <div >
+      <div
       ref={containerRef}
-      style={{ width: "100vw", height: "100vh" }}
-      className="myCallContainer"
+      className="myCallContainer my-24 "
+      style={{ backgroundColor: "transparent" }}
     ></div>
+  </div>
   );
 }

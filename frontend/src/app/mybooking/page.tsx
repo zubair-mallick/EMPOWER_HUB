@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 interface Appointment {
   _id: string;
@@ -29,8 +29,12 @@ interface Student {
 export default function MyBookingPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const [confirmedAppointments, setConfirmedAppointments] = useState<Appointment[]>([]);
-  const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>([]);
+  const [confirmedAppointments, setConfirmedAppointments] = useState<
+    Appointment[]
+  >([]);
+  const [pendingAppointments, setPendingAppointments] = useState<Appointment[]>(
+    []
+  );
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,8 +42,8 @@ export default function MyBookingPage() {
     if (!isLoaded || !user) return;
 
     const role = user?.unsafeMetadata?.role;
-    if (role !== 'councellor') {
-      router.push('/unauthorized');
+    if (role !== "councellor") {
+      router.push("/unauthorized");
       return;
     }
 
@@ -59,7 +63,7 @@ export default function MyBookingPage() {
         setPendingAppointments(pendingData.appointments || []);
         setStudents(studentData.students || []);
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setLoading(false);
       }
@@ -68,12 +72,15 @@ export default function MyBookingPage() {
     fetchAppointmentsAndStudents();
   }, [isLoaded, user, router]);
 
-  const updateStatus = async (appointmentId: string, newStatus: 'confirmed' | 'cancel') => {
+  const updateStatus = async (
+    appointmentId: string,
+    newStatus: "confirmed" | "cancel"
+  ) => {
     try {
       const res = await fetch(`/api/appointments/update/${appointmentId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -81,21 +88,29 @@ export default function MyBookingPage() {
       const data = await res.json();
 
       if (data.success) {
-        setPendingAppointments(prev => prev.filter(app => app._id !== appointmentId));
-        if (newStatus === 'confirmed') {
-          setConfirmedAppointments(prev => [...prev, data.updatedAppointment]);
+        setPendingAppointments((prev) =>
+          prev.filter((app) => app._id !== appointmentId)
+        );
+        if (newStatus === "confirmed") {
+          setConfirmedAppointments((prev) => [
+            ...prev,
+            data.updatedAppointment,
+          ]);
         }
       }
     } catch (error) {
-      console.error('Failed to update appointment:', error);
+      console.error("Failed to update appointment:", error);
     }
   };
 
   const formatDateTime = (datetime: string) =>
-    new Date(datetime).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    new Date(datetime).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
 
   const getStudentDetails = (studentId: string) => {
-    return students.find(s => s.id === studentId);
+    return students.find((s) => s.id === studentId);
   };
 
   if (loading) {
@@ -106,81 +121,175 @@ export default function MyBookingPage() {
     );
   }
 
+  const joinMeet = async (appointmentId: string) => {
+    try {
+      const res = await fetch(`/api/appointments/join-call/${appointmentId}`);
+      const data = await res.json();
+
+      if (data.success && data.room_id) {
+        const username =
+          user?.username || `${user?.firstName}${user?.lastName}`;
+        const redirectUrl = `http://localhost:8000/call_and_chat/${data.room_id}/${username}`;
+        window.location.href = redirectUrl;
+      } else {
+        console.error("Room ID not received or join failed");
+      }
+    } catch (err) {
+      console.error("Error joining meet:", err);
+    }
+  };
+
   return (
     <div className="p-6 mt-14 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-10">My Appointments</h1>
 
       {/* Confirmed Appointments */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">✅ Scheduled Appointments</h2>
-        {confirmedAppointments.length === 0 ? (
-          <p className="text-gray-600">No confirmed appointments.</p>
+      <section className="mb-12 min-h-[30vh]">
+        <h2 className="text-2xl font-semibold mb-4 ">
+          ✅ Scheduled Appointments
+        </h2>
+        {confirmedAppointments
+              .filter((app) => {
+                const endTime = new Date(
+                  new Date(app.scheduledDateTime).getTime() +
+                    app.scheduledDurationMinutes * 60000
+                );
+                return new Date() <= endTime;
+              }).length === 0 ? (
+          <p className="text-gray-600 ">No confirmed appointments.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {confirmedAppointments.map(app => {
-              const student = getStudentDetails(app.studentId);
-              return (
-                <div key={app._id} className="border p-4 rounded-lg shadow-md">
-                  {student ? (
-                    <>
-                      <div className="flex items-center gap-3 mb-2">
-                        <img src={student.profileImageUrl} alt={student.firstName} className="w-10 h-10 rounded-full" />
-                        <div>
-                          <p className="font-semibold">{student.firstName} {student.lastName}</p>
-                          <p className="text-sm text-gray-600">{student.email}</p>
+            {confirmedAppointments
+              .filter((app) => {
+                const endTime = new Date(
+                  new Date(app.scheduledDateTime).getTime() +
+                    app.scheduledDurationMinutes * 60000
+                );
+                return new Date() <= endTime;
+              })
+              .map((app) => {
+                const student = getStudentDetails(app.studentId);
+                return (
+                  <div
+                    key={app._id}
+                    className="border p-4 rounded-lg shadow-md"
+                  >
+                    {student ? (
+                      <>
+                        <div className="flex items-center gap-3 mb-2">
+                          <img
+                            src={student.profileImageUrl}
+                            alt={student.firstName}
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <p className="font-semibold">
+                              {student.firstName} {student.lastName}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {student.email}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-red-500">Student not found</p>
-                  )}
-                  <p><strong>Date & Time:</strong> {formatDateTime(app.scheduledDateTime)}</p>
-                  <p><strong>Duration:</strong> {app.scheduledDurationMinutes} mins</p>
-                  <p className="text-green-600 font-medium mt-2">Status: {app.status}</p>
-                </div>
-              );
-            })}
+                      </>
+                    ) : (
+                      <p className="text-red-500">Student not found</p>
+                    )}
+                    <p>
+                      <strong>Date & Time:</strong>{" "}
+                      {formatDateTime(app.scheduledDateTime)}
+                    </p>
+                    <p>
+                      <strong>Duration:</strong> {app.scheduledDurationMinutes}{" "}
+                      mins
+                    </p>
+                    <p className="text-green-600 font-medium mt-2">
+                      Status: {app.status}
+                    </p>
+
+                    {(() => {
+                      const now = new Date();
+                      const startTime = new Date(app.scheduledDateTime);
+                      const endTime = new Date(
+                        startTime.getTime() +
+                          app.scheduledDurationMinutes * 60000
+                      );
+
+                      if (now >= startTime && now <= endTime) {
+                        return (
+                          <button
+                            onClick={() => joinMeet(app._id)}
+                            className="mt-3 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                          >
+                            Join Meet
+                          </button>
+                        );
+                      }
+
+                      return null;
+                    })()}
+                  </div>
+                );
+              })}
           </div>
         )}
       </section>
 
       {/* Pending Appointments */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">🕒 Requested Appointments</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          🕒 Requested Appointments
+        </h2>
         {pendingAppointments.length === 0 ? (
           <p className="text-gray-600">No pending requests.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pendingAppointments.map(app => {
+            {pendingAppointments.map((app) => {
               const student = getStudentDetails(app.studentId);
               return (
                 <div key={app._id} className="border p-4 rounded-lg shadow-md">
                   {student ? (
                     <>
                       <div className="flex items-center gap-3 mb-2">
-                        <img src={student.profileImageUrl} alt={student.firstName} className="w-10 h-10 rounded-full" />
+                        <img
+                          src={student.profileImageUrl}
+                          alt={student.firstName}
+                          className="w-10 h-10 rounded-full"
+                        />
                         <div>
-                          <p className="font-semibold">{student.firstName} {student.lastName}</p>
-                          <p className="text-sm text-gray-600">{student.email}</p>
+                          <p className="font-semibold">
+                            {student.firstName} {student.lastName}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {student.email}
+                          </p>
                         </div>
                       </div>
                     </>
                   ) : (
                     <p className="text-red-500">Student not found</p>
                   )}
-                  <p><strong>Date & Time:</strong> {formatDateTime(app.scheduledDateTime)}</p>
-                  <p><strong>Duration:</strong> {app.scheduledDurationMinutes} mins</p>
-                  <p className="text-yellow-500 font-medium mt-2">Status: {app.status}</p>
+                  <p>
+                    <strong>Date & Time:</strong>{" "}
+                    {formatDateTime(app.scheduledDateTime)}
+                  </p>
+                  <p>
+                    <strong>Duration:</strong> {app.scheduledDurationMinutes}{" "}
+                    mins
+                  </p>
+                  <p className="text-yellow-500 font-medium mt-2">
+                    Status: {app.status}
+                  </p>
 
                   <div className="mt-4 flex gap-2">
                     <button
-                      onClick={() => updateStatus(app._id, 'confirmed')}
+                      onClick={() => updateStatus(app._id, "confirmed")}
                       className="px-4 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                     >
                       Confirm
                     </button>
                     <button
-                      onClick={() => updateStatus(app._id, 'cancel')}
+                      onClick={() => updateStatus(app._id, "cancel")}
                       className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                     >
                       Cancel
