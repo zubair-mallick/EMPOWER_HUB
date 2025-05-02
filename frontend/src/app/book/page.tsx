@@ -79,9 +79,6 @@ export default function BookCounselorPage() {
     }
   };
 
-
-
-
   // Find the selected counselor based on the URL param
   const selectedCounselor = counselors.find((c) => c.id === id);
 
@@ -110,90 +107,91 @@ export default function BookCounselorPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {appointments.
-          filter((app) => {
-            const endTime = new Date(
-              new Date(app.scheduledDateTime).getTime() +
-                app.scheduledDurationMinutes * 60000
-            );
-            return new Date() <= endTime;
-          })
-          .map((appointment) => {
-            const scheduledDateTime = new Date(appointment.scheduledDateTime);
-            const formattedDateTime = scheduledDateTime.toLocaleString();
-            const counselor = counselors.find(
-              (c) => c.id === appointment.counselorId
-            );
+          {appointments
+            .filter((app) => {
+              const endTime = new Date(
+                new Date(app.scheduledDateTime).getTime() +
+                  app.scheduledDurationMinutes * 60000
+              );
+              return new Date() <= endTime;
+            })
+            .map((appointment) => {
+              // **ONLY render if we have a counselor for this appointment**
+              const counselor = counselors.find(
+                (c) => c.id === appointment.counselorId
+              );
+              if (!counselor) return null;
 
-            return (
-              <div
-                key={appointment._id}
-                className="border p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full max-w-md mx-auto"
-              >
-                {counselor && (
-                  <>
-                    <div className="flex items-center mb-2">
-                      <img
-                        src={counselor.profileImageUrl}
-                        alt="profile"
-                        className="w-16 h-16 rounded-full"
-                      />
-                      <p className="text-xl font-semibold ml-4">
-                        {counselor.firstName} {counselor.lastName}
-                      </p>
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      Scheduled for: {formattedDateTime}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Duration: {appointment.scheduledDurationMinutes} minutes
-                    </p>
-                    <p className="text-sm mt-2 font-semibold w-fit flex items-center space-x-1">
-                      <span>Status:</span>
-                      <span
-                        className={`${
-                          appointment.status === "pending"
-                            ? "text-yellow-400"
-                            : appointment.status === "cancelled"
-                            ? "text-red-400"
-                            : appointment.status === "confirmed"
-                            ? "text-green-400"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {appointment.status.charAt(0).toUpperCase() +
-                          appointment.status.slice(1)}
-                      </span>
-                    </p>
+              const scheduledDateTime = new Date(
+                appointment.scheduledDateTime
+              );
+              const formattedDateTime = scheduledDateTime.toLocaleString();
 
-                     
-                    {(() => {
-                      const now = new Date();
-                      const startTime = new Date(appointment.scheduledDateTime);
-                      const endTime = new Date(
-                        startTime.getTime() +
+              return (
+                <div
+                  key={appointment._id}
+                  className="border p-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full max-w-md mx-auto"
+                >
+                  <div className="flex items-center mb-2">
+                    <img
+                      src={counselor.profileImageUrl}
+                      alt="profile"
+                      className="w-16 h-16 rounded-full"
+                    />
+                    <p className="text-xl font-semibold ml-4">
+                      {counselor.firstName} {counselor.lastName}
+                    </p>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Scheduled for: {formattedDateTime}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Duration: {appointment.scheduledDurationMinutes} minutes
+                  </p>
+                  <p className="text-sm mt-2 font-semibold w-fit flex items-center space-x-1">
+                    <span>Status:</span>
+                    <span
+                      className={`${
+                        appointment.status === "pending"
+                          ? "text-yellow-400"
+                          : appointment.status === "cancelled"
+                          ? "text-red-400"
+                          : appointment.status === "confirmed"
+                          ? "text-green-400"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {appointment.status.charAt(0).toUpperCase() +
+                        appointment.status.slice(1)}
+                    </span>
+                  </p>
+
+                  {(() => {
+                    const now = new Date();
+                    const startTime = new Date(
+                      appointment.scheduledDateTime
+                    );
+                    const endTime = new Date(
+                      startTime.getTime() +
                         appointment.scheduledDurationMinutes * 60000
+                    );
+
+                    if (now >= startTime && now <= endTime) {
+                      return (
+                        <button
+                          onClick={() => joinMeet(appointment._id)}
+                          className="mt-3 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                          Join Meet
+                        </button>
                       );
+                    }
 
-                      if (now >= startTime && now <= endTime) {
-                        return (
-                          <button
-                            onClick={() => joinMeet(appointment._id)}
-                            className="mt-3 px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                          >
-                            Join Meet
-                          </button>
-                        );
-                      }
-
-                      return null;
-                    })()}     
-
-                  </>
-                )}
-              </div>
-            );
-          })}
+                    return null;
+                  })()}
+                </div>
+              );
+            })}
         </div>
       )}
 
@@ -246,7 +244,8 @@ export default function BookCounselorPage() {
             />
             <div>
               <p className="text-xl font-bold">
-                {selectedCounselor.firstName} {selectedCounselor.lastName}
+                {selectedCounselor.firstName}{" "}
+                {selectedCounselor.lastName}
               </p>
               <p className="text-gray-600">{selectedCounselor.email}</p>
               <p className="text-gray-600">
@@ -259,8 +258,6 @@ export default function BookCounselorPage() {
           </div>
         </div>
       )}
-
-      {/* Bookings Section */}
     </div>
   );
 }
