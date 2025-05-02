@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/dbConnect";
 import { Appointment } from "@/models/Appointment";
+import { Error } from "mongoose";
 
 type Params = {
   params: {
@@ -17,8 +18,15 @@ export async function GET(req: Request, { params }: Params) {
 
   const filter: any = { studentId: userId };
   if (status) filter.status = status;
+  let appointments =null
   
-
-  const appointments = await Appointment.find(filter).sort({ scheduledDateTime: 1 });
+try{
+  
+   appointments = await Appointment.find(filter).sort({ scheduledDateTime: 1 });
+}
+catch(e:unknown ){
+console.log(e)
+return Response.json({ success: false, appointments ,message:`${e.message}` });
+}
   return Response.json({ success: true, appointments });
 }
