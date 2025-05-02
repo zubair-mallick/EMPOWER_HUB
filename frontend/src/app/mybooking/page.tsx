@@ -52,7 +52,7 @@ export default function MyBookingPage() {
         const [confirmedRes, pendingRes, studentsRes] = await Promise.all([
           fetch(`/api/appointments/counselor/${user.id}?status=confirmed`),
           fetch(`/api/appointments/counselor/${user.id}?status=pending`),
-          fetch(`http://localhost:8000/api/getStudents`),
+          fetch(`/api/getStudents`),
         ]);
 
         const confirmedData = await confirmedRes.json();
@@ -129,7 +129,7 @@ export default function MyBookingPage() {
       if (data.success && data.room_id) {
         const username =
           user?.username || `${user?.firstName}${user?.lastName}`;
-        const redirectUrl = `http://localhost:8000/call_and_chat/${data.room_id}/${username}`;
+        const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/call_and_chat/${data.room_id}/${username}`;
         window.location.href = redirectUrl;
       } else {
         console.error("Room ID not received or join failed");
