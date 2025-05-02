@@ -1,12 +1,15 @@
-import { clerkClient } from "@clerk/clerk-sdk-node";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export async function GET() {
   try {
-    const { data: users } = await clerkClient.users.getUserList();
-
+    const response = await clerkClient();
+  let users:any = await response.users.getUserList();
+  users= users.data
+  console.log(users);
+  
     const counselors = users
-      .filter((user) => user.unsafeMetadata?.role === "councellor")
-      .map((user) => ({
+      .filter((user:any) => user.unsafeMetadata?.role === "councellor")
+      .map((user:any) => ({
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
