@@ -12,6 +12,7 @@ export async function GET(req: Request, { params }: Params) {
   const { searchParams } = new URL(req.url);
   const status = searchParams.get('status');
 
+  console.log("here");
   await connectDB();
 
   const { userId } = params;
@@ -20,13 +21,8 @@ export async function GET(req: Request, { params }: Params) {
   if (status) filter.status = status;
   let appointments =null
   
-try{
   
    appointments = await Appointment.find(filter).sort({ scheduledDateTime: 1 });
-}
-catch(e:unknown ){
-console.log(e)
-return Response.json({ success: false, appointments ,message:`${e.message}` });
-}
+
   return Response.json({ success: true, appointments });
 }
