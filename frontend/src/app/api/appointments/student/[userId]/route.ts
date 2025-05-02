@@ -9,6 +9,7 @@ type Params = {
 };
 
 export async function GET(req: Request, { params }: Params) {
+ try{
   const { searchParams } = new URL(req.url);
   const status = searchParams.get('status');
 
@@ -21,8 +22,13 @@ export async function GET(req: Request, { params }: Params) {
   if (status) filter.status = status;
   let appointments =null
   
-  
+  console.log("before db");
    appointments = await Appointment.find(filter).sort({ scheduledDateTime: 1 });
-
+   console.log("after db");
   return Response.json({ success: true, appointments });
+ }
+ catch(e){
+  return Response.json({ success: false, message:e });
+  console.log(e)
+ }
 }
