@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useParams } from "next/navigation";
-import { transcribeAudio, summarizeTranscriptionToPoints } from "./actions";  // import the summarize action
+import { transcribeAudio, summarizeTranscriptionToPoints } from "./actions"; // import the summarize action
 
 export default function CallPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -11,7 +11,9 @@ export default function CallPage() {
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string | null>(null);
-  const [summarizedTranscript, setSummarizedTranscript] = useState<string | null>(null); // state for summarized transcript
+  const [summarizedTranscript, setSummarizedTranscript] = useState<
+    string | null
+  >(null); // state for summarized transcript
   const [busy, setBusy] = useState(false);
   const [summaryBusy, setSummaryBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,12 +38,14 @@ export default function CallPage() {
     const zp = ZegoUIKitPrebuilt.create(kitToken);
 
     // 2️⃣ Start MediaRecorder
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
       .then((stream) => {
         const mr = new MediaRecorder(stream);
         mediaRecorderRef.current = mr;
         chunksRef.current = [];
-        mr.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
+        mr.ondataavailable = (e) =>
+          e.data.size && chunksRef.current.push(e.data);
         mr.start();
       })
       .catch((e) => {
@@ -71,13 +75,18 @@ export default function CallPage() {
         await new Promise((r) => setTimeout(r, 500));
 
         // build blob & URL
-        const blob = new Blob(chunksRef.current, { type: "audio/webm; codecs=opus" });
+        const blob = new Blob(chunksRef.current, {
+          type: "audio/webm; codecs=opus",
+        });
         setAudioUrl(URL.createObjectURL(blob));
 
         try {
           // send to server action
           const fd = new FormData();
-          fd.append("audio", new File([blob], "call.webm", { type: blob.type }));
+          fd.append(
+            "audio",
+            new File([blob], "call.webm", { type: blob.type })
+          );
 
           const { transcript } = await transcribeAudio(fd);
           setTranscript(transcript);
@@ -113,8 +122,12 @@ export default function CallPage() {
   return (
     <div className="mt-20 p-4 shadow-lg rounded-lg">
       {error && <p className="text-red-600 mb-2">{error}</p>}
-      {!transcript && busy && <p className="text-blue-600 mb-2">Transcribing… please wait</p>}
-      {transcript && busy && <p className="text-blue-600 mb-2">Summarizing… please wait</p>}
+      {!transcript && busy && (
+        <p className="text-blue-600 mb-2">Transcribing… please wait</p>
+      )}
+      {transcript && busy && (
+        <p className="text-blue-600 mb-2">Summarizing… please wait</p>
+      )}
 
       {transcript && (
         <section className="p-4 rounded">
@@ -134,9 +147,16 @@ export default function CallPage() {
         <section className="p-4 mt-6 rounded">
           <h2 className="font-semibold mb-2">Summarized Points</h2>
           <ul className="list-disc pl-6 whitespace-pre-line">
-            {summarizedTranscript.split("\n").map((point, idx) => (
-              <li key={idx}>{point}</li>
-            ))}
+            {summarizedTranscript
+              .replace(/\\n/g, "\n") // Convert escaped \n to real newlines
+              .replace(/"/g, "") // Remove quotes
+              .replace(/\[|\]/g, "") // Remove square brackets
+              .split("\n")
+              .map((line) => line.trim()) // Trim each line
+              .filter((line) => line.startsWith("•")) // Only show valid bullet points
+              .map((point, idx) => (
+                <li key={idx}>{point.slice(1).trim()}</li> // Remove the bullet since <li> adds it
+              ))}
           </ul>
         </section>
       )}
