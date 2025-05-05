@@ -69,7 +69,7 @@ export default function BookCounselorPage() {
       if (data.success && data.room_id) {
         const username =
           user?.username || `${user?.firstName}${user?.lastName}`;
-        const redirectUrl = `http://localhost:8000/call_and_chat/${data.room_id}/${username}`;
+        const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/call_and_chat/${data.room_id}/${username}`;
         window.location.href = redirectUrl;
       } else {
         console.error("Room ID not received or join failed");
