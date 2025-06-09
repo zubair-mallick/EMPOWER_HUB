@@ -53,6 +53,7 @@ EmpowerHub is an AI-powered platform designed to provide career and education gu
 
 ## 📌 Key Features
 
+
 - **AI Career Suggestor & Roadmap Maker** – Personalized career suggestions with a visual roadmap.
 - **Career Insights** – Information on exams, scholarships, and opportunities.
 - **Resource Finder** – AI-curated study materials and upskilling resources.
