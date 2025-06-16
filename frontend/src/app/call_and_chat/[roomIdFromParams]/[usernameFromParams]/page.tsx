@@ -29,8 +29,8 @@ export default function CallPage() {
 
     // 1️⃣ Initialize Zego
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-      786123663,
-      "6353d664e2e53dd7e2211db2bcb01392",
+      350137917,
+      "b4d4c9eb051246975f783fc15ca1f382",
       roomId,
       username + "_" + Math.random().toString(36).slice(2, 7),
       username
